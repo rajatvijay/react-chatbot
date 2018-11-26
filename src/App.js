@@ -4,13 +4,60 @@ import "./app.css";
 import ChatBot, { Loading } from "react-simple-chatbot";
 import DropList from "./components/DropList";
 import DoubleDropdown from "./components/DoubleDropdown";
+import axios from "axios";
 
 class App extends Component {
-  state = { data: "data", SelectedCarMaker: "" };
+  state = { data: "data", coverage: "", year: "" };
 
-  handleEnd({ steps, values }) {
+  handleEnd = ({ steps, values }) => {
     console.log(values);
-  }
+    const {
+      coverage,
+      year,
+      model,
+      deductible_collision,
+      deductible_comprehensive,
+      make,
+      license_date,
+      incidents,
+      driver_dob
+    } = this.state;
+    const obj = {
+      car_insurances: [
+        {
+          monthly_cost: "100",
+          zipcode_where_parked: values[0],
+          coverage: "100",
+          car: [
+            {
+              year,
+              make,
+              model,
+              deductible_collision: deductible_collision.slice(1),
+              deductible_comprehensive: deductible_comprehensive.slice(1)
+            }
+          ],
+          driver: [
+            {
+              driver_name: "john",
+              license_date: new Date(
+                `${license_date.year.toString()}.${license_date.month}.01`
+              ).toISOString(),
+              incidents,
+              driver_dob: new Date(
+                `${driver_dob.year.toString()}.${driver_dob.month}.01`
+              ).toISOString()
+            }
+          ]
+        }
+      ]
+    };
+
+    axios
+      .post("https://api.sikka.app/user/rate_model/guest/", obj)
+      .then(data => console.log("success", data))
+      .catch(err => console.log("err", err));
+  };
 
   doubleSelected = (key, item) => {
     var obj = {};
@@ -19,14 +66,18 @@ class App extends Component {
   };
 
   optionSelected = (key, item) => {
+    if (key == "make") {
+      localStorage.setItem("key", item.value);
+    }
     var obj = {};
     obj[key] = item.value;
 
-    this.setState(obj);
+    return this.setState(obj);
   };
 
   render() {
     console.log("state", this.state);
+
     return (
       <div className="App">
         <div>
@@ -69,8 +120,9 @@ class App extends Component {
                 component: (
                   <DropList
                     question="Select Year"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=year"
                     call={this.optionSelected}
-                    keyID="SelectedCarYear"
+                    keyID="year"
                   />
                 ),
                 waitAction: true,
@@ -88,8 +140,9 @@ class App extends Component {
                 component: (
                   <DropList
                     question="choose maker"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=make"
                     call={this.optionSelected}
-                    keyID="SelectedCarMaker"
+                    keyID="make"
                   />
                 ),
                 waitAction: true,
@@ -105,8 +158,11 @@ class App extends Component {
                 component: (
                   <DropList
                     question="Car Model"
+                    url={`https://api.sikka.app/user/dropdown/list/?parent=model&filter=${localStorage.getItem(
+                      "key"
+                    )}`}
                     call={this.optionSelected}
-                    keyID="SelectedCarModel"
+                    keyID="model"
                   />
                 ),
                 waitAction: true,
@@ -123,8 +179,9 @@ class App extends Component {
                 component: (
                   <DoubleDropdown
                     question="Month and Year"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=year"
                     call={this.doubleSelected}
-                    keyID="licenese"
+                    keyID="license_date"
                   />
                 ),
                 waitAction: true,
@@ -141,8 +198,9 @@ class App extends Component {
                 component: (
                   <DropList
                     question="Number of incidents"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=incidents"
                     call={this.optionSelected}
-                    keyID="incident"
+                    keyID="incidents"
                   />
                 ),
                 waitAction: true,
@@ -150,16 +208,17 @@ class App extends Component {
               },
               {
                 id: "8",
-                message: "What is the age of the primary driver?",
-                trigger: "driver-age"
+                message: "What is the DOB of the primary driver?",
+                trigger: "driver_dob"
               },
               {
-                id: "driver-age",
+                id: "driver_dob",
                 component: (
                   <DoubleDropdown
                     question="Month and Year"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=year"
                     call={this.doubleSelected}
-                    keyID="driverAge"
+                    keyID="driver_dob"
                   />
                 ),
                 waitAction: true,
@@ -175,8 +234,9 @@ class App extends Component {
                 component: (
                   <DropList
                     question="collision"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=deductible_collision"
                     call={this.optionSelected}
-                    keyID="collision"
+                    keyID="deductible_collision"
                   />
                 ),
                 waitAction: true,
@@ -192,8 +252,9 @@ class App extends Component {
                 component: (
                   <DropList
                     question="comprehensive deductible"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=deductible_comprehensive"
                     call={this.optionSelected}
-                    keyID="comprehensive"
+                    keyID="deductible_comprehensive"
                   />
                 ),
                 waitAction: true,
@@ -209,6 +270,7 @@ class App extends Component {
                 component: (
                   <DropList
                     question="coverage levels"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=coverage"
                     call={this.optionSelected}
                     keyID="coverage"
                   />
@@ -267,6 +329,7 @@ class App extends Component {
                 component: (
                   <DropList
                     question="About mileage"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=mileage"
                     call={this.optionSelected}
                     keyID="mileage"
                   />
@@ -281,14 +344,13 @@ class App extends Component {
               },
               {
                 id: "provideTime",
-                component: (
-                  <DropList
-                    question="Time"
-                    call={this.optionSelected}
-                    keyID="provideTime"
-                  />
-                ),
-                waitAction: true,
+                user: true,
+                validator: value => {
+                  if (isNaN(value)) {
+                    return "value should be a number";
+                  }
+                  return true;
+                },
                 trigger: "18"
               },
               {
@@ -301,8 +363,9 @@ class App extends Component {
                 component: (
                   <DropList
                     question="safety"
+                    url="https://api.sikka.app/user/dropdown/list/?parent=safety_features"
                     call={this.optionSelected}
-                    keyID="provideTime"
+                    keyID="safety"
                   />
                 ),
                 waitAction: true,
@@ -320,5 +383,6 @@ class App extends Component {
     );
   }
 }
+//console.log(new Date().toISOString());
 
 export default App;
