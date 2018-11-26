@@ -5,9 +5,10 @@ import ChatBot, { Loading } from "react-simple-chatbot";
 import DropList from "./components/DropList";
 import DoubleDropdown from "./components/DoubleDropdown";
 import axios from "axios";
+import Calculate from "./components/Calculate";
 
 class App extends Component {
-  state = { data: "data", coverage: "", year: "" };
+  state = { data: "data" };
 
   handleEnd = ({ steps, values }) => {
     console.log(values);
@@ -77,6 +78,7 @@ class App extends Component {
 
   render() {
     console.log("state", this.state);
+    const { state } = this;
 
     return (
       <div className="App">
@@ -95,10 +97,10 @@ class App extends Component {
                 id: "2",
                 message:
                   "To start I will need your zip code where your car is parked",
-                trigger: "Zip"
+                trigger: "zip"
               },
               {
-                id: "Zip",
+                id: "zip",
                 user: true,
                 validator: value => {
                   if (isNaN(value) || value.length < 5) {
@@ -106,17 +108,17 @@ class App extends Component {
                   }
                   return true;
                 },
-                trigger: "car-year"
-              },
-
-              {
-                id: "car-year",
-                message: "What year is the car you drive",
                 trigger: "3"
               },
 
               {
                 id: "3",
+                message: "What year is the car you drive",
+                trigger: "car-year"
+              },
+
+              {
+                id: "car-year",
                 component: (
                   <DropList
                     question="Select Year"
@@ -151,10 +153,10 @@ class App extends Component {
               {
                 id: "5",
                 message: "What is the model of your car",
-                trigger: "car-model"
+                trigger: "model"
               },
               {
-                id: "car-model",
+                id: "model",
                 component: (
                   <DropList
                     question="Car Model"
@@ -172,10 +174,10 @@ class App extends Component {
                 id: "6",
                 message:
                   "When did the primary driver get their US driving license?",
-                trigger: "license"
+                trigger: "license_date"
               },
               {
-                id: "license",
+                id: "license_date",
                 component: (
                   <DoubleDropdown
                     question="Month and Year"
@@ -191,10 +193,10 @@ class App extends Component {
                 id: "7",
                 message:
                   "How many driving incidents has the primary driver had in the last three years?",
-                trigger: "incident"
+                trigger: "incidents"
               },
               {
-                id: "incident",
+                id: "incidents",
                 component: (
                   <DropList
                     question="Number of incidents"
@@ -227,10 +229,10 @@ class App extends Component {
               {
                 id: "9",
                 message: "What is the collision deductible you want?",
-                trigger: "collision"
+                trigger: "deductible_collision"
               },
               {
-                id: "collision",
+                id: "deductible_collision",
                 component: (
                   <DropList
                     question="collision"
@@ -245,10 +247,10 @@ class App extends Component {
               {
                 id: "10",
                 message: "What is the comprehensive deductible you want?",
-                trigger: "comprehensive"
+                trigger: "deductible_comprehensive"
               },
               {
-                id: "comprehensive",
+                id: "deductible_comprehensive",
                 component: (
                   <DropList
                     question="comprehensive deductible"
@@ -285,8 +287,14 @@ class App extends Component {
               },
               {
                 id: "13",
-                message:
-                  "We estimate you can save <$saving_amount> from <#> providers",
+                component: (
+                  <Calculate
+                    url="https://api.sikka.app/user/rate_model/guest/"
+                    data={state}
+                  />
+                ),
+                asMessage: true,
+                waitAction: true,
                 trigger: "2way"
               },
               {
@@ -371,10 +379,20 @@ class App extends Component {
                 waitAction: true,
                 trigger: "19"
               },
+
               {
                 id: "19",
+                component: (
+                  <Calculate url="https://api.sikka.app/user/rate_model/guest/" />
+                ),
+                asMessage: true,
+                waitAction: true,
+                trigger: "20"
+              },
+              {
+                id: "20",
                 message: "Great lets get you started.  ",
-                end: true
+                trigger: "1"
               }
             ]}
           />

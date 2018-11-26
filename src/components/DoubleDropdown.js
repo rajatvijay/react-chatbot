@@ -128,7 +128,7 @@ class DropList extends Component {
           this.setState({ trigger: true }, () => {
             const { month, year } = this.state;
             call(keyID, { month, year });
-            this.props.triggerNextStep();
+            this.props.triggerNextStep({ value: { month, year } });
           });
         }
       });
@@ -139,7 +139,7 @@ class DropList extends Component {
           this.setState({ trigger: true }, () => {
             const { month, year } = this.state;
             call(keyID, { month, year });
-            this.props.triggerNextStep();
+            this.props.triggerNextStep({ value: { month, year } });
           });
         }
       });

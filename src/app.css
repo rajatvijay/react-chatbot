@@ -2,3 +2,6 @@
   width: 100% !important;
   height: 100vh !important;
 }
+.Dropdown-root {
+  min-width: 200px !important;
+}

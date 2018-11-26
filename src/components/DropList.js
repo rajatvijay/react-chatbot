@@ -82,6 +82,7 @@ class DropList extends Component {
   // }
 
   componentWillMount() {
+    console.log("steps", this.props.steps);
     console.log("url", this.props.url);
     axios
       .get(this.props.url, {
@@ -99,11 +100,14 @@ class DropList extends Component {
 
   triggetNext(item) {
     const { keyID, call } = this.props;
-
+    // var lastProperty;
+    // for (lastProperty in this.props.steps);
+    // lastProperty;
+    // lastProperty.value = item.values;
     call(keyID, item);
 
     this.setState({ trigger: true, default: item.value }, () => {
-      this.props.triggerNextStep();
+      this.props.triggerNextStep({ value: item.value });
     });
   }
 
