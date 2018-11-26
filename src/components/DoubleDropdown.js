@@ -3,30 +3,53 @@ import PropTypes from "prop-types";
 import ChatBot, { Loading } from "react-simple-chatbot";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
+import axios from "axios";
 
 const options = [
-  { value: "one", label: "One" },
+  { value: "01", label: "january" },
   {
-    value: "two",
-    label: "Two",
-    className: "myOptionClassName"
+    value: "02",
+    label: "february"
   },
   {
-    type: "group",
-    name: "group1",
-    items: [
-      {
-        value: "three",
-        label: "Three",
-        className: "myOptionClassName"
-      },
-      { value: "four", label: "Four" }
-    ]
+    value: "03",
+    label: "march"
   },
   {
-    type: "group",
-    name: "group2",
-    items: [{ value: "five", label: "Five" }, { value: "six", label: "Six" }]
+    value: "04",
+    label: "april"
+  },
+  {
+    value: "05",
+    label: "may"
+  },
+  {
+    value: "06",
+    label: "june"
+  },
+  {
+    value: "07",
+    label: "july"
+  },
+  {
+    value: "08",
+    label: "august"
+  },
+  {
+    value: "09",
+    label: "september"
+  },
+  {
+    value: "10",
+    label: "october"
+  },
+  {
+    value: "11",
+    label: "november"
+  },
+  {
+    value: "12",
+    label: "december"
   }
 ];
 
@@ -38,7 +61,7 @@ class DropList extends Component {
       loading: false,
       result: "",
       default: "Choose month and year",
-
+      options: [],
       trigger: false,
       month: "",
       year: ""
@@ -81,32 +104,24 @@ class DropList extends Component {
   //   xhr.open("GET", queryUrl);
   //   xhr.send();
   // }
+  componentWillMount() {
+    axios
+      .get(this.props.url, {
+        headers: {}
+      })
+      .then(data => {
+        console.log("api", data.data.data.list);
+        const { list } = data.data.data;
+        this.setState({ options: list }, () => {
+          this.setState({ loading: false });
+        });
+      })
+      .catch(err => console.log("error", err));
+  }
 
   triggetNext(item, val) {
     const { keyID, call } = this.props;
 
-    // if (val === "1") {
-    //   this.setState({ month: item.value }, () => {
-    //     console.log(this.state);
-    //     this.props.triggerNextStep();
-    //     if (month != "") {
-    //       this.setState({ trigger: true, default: item.value }, () => {
-    //         call(keyID, item);
-    //       });
-    //     }
-    //   });
-    // }
-    // if (val === "2") {
-    //   this.setState({ year: item.value }, () => {
-    //     console.log(this.state);
-    //     if (month != "" && year != "") {
-    //       this.setState({ trigger: true, default: item.value }, () => {
-    //         call(keyID, { month, year });
-    //         this.props.triggerNextStep();
-    //       });
-    //     }
-    //   });
-    // }
     if (val === "1") {
       this.setState({ month: item.value }, val => {
         if (this.state.month && this.state.year) {
@@ -129,13 +144,6 @@ class DropList extends Component {
         }
       });
     }
-
-    // if (month || year) {
-    //   this.setState({ trigger: true, default: item.value }, () => {
-    //     call(keyID, { month, year });
-    //     this.props.triggerNextStep();
-    //   });
-    // }
   }
 
   render() {
@@ -161,7 +169,7 @@ class DropList extends Component {
                   placeholder="Select an option"
                 />
                 <Dropdown
-                  options={options}
+                  options={this.state.options}
                   onChange={item => this.triggetNext(item, "2")}
                   value="Year"
                   placeholder="Select an option"

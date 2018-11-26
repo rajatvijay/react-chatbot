@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import ChatBot, { Loading } from "react-simple-chatbot";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
+import axios from "axios";
 
 const options = [
   { value: "one", label: "One" },
@@ -35,10 +36,11 @@ class DropList extends Component {
     super(props);
 
     this.state = {
-      loading: false,
+      loading: true,
       result: "",
       default: "choose value",
-      trigger: false
+      trigger: false,
+      options: []
     };
 
     this.triggetNext = this.triggetNext.bind(this);
@@ -79,6 +81,22 @@ class DropList extends Component {
   //   xhr.send();
   // }
 
+  componentWillMount() {
+    console.log("url", this.props.url);
+    axios
+      .get(this.props.url, {
+        headers: {}
+      })
+      .then(data => {
+        console.log("api", data.data.data.list);
+        const { list } = data.data.data;
+        this.setState({ options: list.length > 0 ? list : options }, () => {
+          this.setState({ loading: false });
+        });
+      })
+      .catch(err => console.log("error", err));
+  }
+
   triggetNext(item) {
     const { keyID, call } = this.props;
 
@@ -90,8 +108,8 @@ class DropList extends Component {
   }
 
   render() {
-    const { trigger, loading, result } = this.state;
-
+    const { trigger, loading, result, options } = this.state;
+    console.log("result", result);
     return (
       <div className="dbpedia">
         {loading ? <Loading /> : result}
@@ -107,7 +125,7 @@ class DropList extends Component {
               <Dropdown
                 options={options}
                 onChange={this.triggetNext}
-                value={options[0].value}
+                value={options[0]}
                 placeholder="Select an option"
               />
             )}
