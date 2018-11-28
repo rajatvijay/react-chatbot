@@ -114,12 +114,23 @@ class Calculate extends Component {
       .post(this.props.url, obj)
       .then(data => {
         console.log("data", data);
-        const { rate } = data.data.data.rate_model;
-        this.setState({ save: rate, loading: false }, () => {
+        if (data.data.data.rate_model) {
+          const { rate } = data.data.data.rate_model;
+          this.setState({ save: rate, loading: false }, () => {
+            this.props.triggerNextStep();
+          });
+        } else {
+          this.setState({ loading: false }, () => {
+            this.props.triggerNextStep();
+          });
+        }
+      })
+      .catch(err => {
+        console.log("err", err);
+        this.setState({ loading: false }, () => {
           this.props.triggerNextStep();
         });
-      })
-      .catch(err => console.log("err", err));
+      });
   }
 
   triggetNext() {
@@ -137,7 +148,11 @@ class Calculate extends Component {
         {!loading && (
           <div>
             {!trigger && (
-              <div>We estimate you can save {save} from providers</div>
+              <div>
+                {this.props.message
+                  ? this.props.message
+                  : `We estimate you can save ${save} from other providers`}
+              </div>
             )}
           </div>
         )}
