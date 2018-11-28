@@ -305,7 +305,7 @@ class App extends Component {
                     label: "Refining Quote",
                     trigger: "14"
                   },
-                  { value: "Shop", label: "Shop", trigger: "19" }
+                  { value: "Shop", label: "Shop", trigger: "shop" }
                 ]
               },
 
@@ -392,7 +392,17 @@ class App extends Component {
               {
                 id: "20",
                 message: "Great lets get you started.  ",
-                trigger: "1"
+                trigger: "shopButton"
+              },
+              {
+                id: "shopButton",
+                options: [{ value: "Shop", label: "Shop", trigger: "shop" }]
+              },
+              {
+                id: "shop",
+                component: <Calculate url="https://api/" message="Thank you" />,
+                asMessage: true,
+                end: true
               }
             ]}
           />
