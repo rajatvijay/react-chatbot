@@ -76,10 +76,12 @@ class Calculate extends Component {
       make,
       license_date,
       incidents,
-      driver_dob
+      driver_dob,
+      email
     } = customObj;
 
     const obj = {
+      email,
       car_insurances: [
         {
           monthly_cost: "100",

@@ -10,55 +10,55 @@ import Calculate from "./components/Calculate";
 class App extends Component {
   state = { data: "data" };
 
-  handleEnd = ({ steps, values }) => {
-    console.log(values);
-    const {
-      coverage,
-      year,
-      model,
-      deductible_collision,
-      deductible_comprehensive,
-      make,
-      license_date,
-      incidents,
-      driver_dob
-    } = this.state;
-    const obj = {
-      car_insurances: [
-        {
-          monthly_cost: "100",
-          zipcode_where_parked: values[0],
-          coverage: "100",
-          car: [
-            {
-              year,
-              make,
-              model,
-              deductible_collision: deductible_collision.slice(1),
-              deductible_comprehensive: deductible_comprehensive.slice(1)
-            }
-          ],
-          driver: [
-            {
-              driver_name: "john",
-              license_date: new Date(
-                `${license_date.year.toString()}.${license_date.month}.01`
-              ).toISOString(),
-              incidents,
-              driver_dob: new Date(
-                `${driver_dob.year.toString()}.${driver_dob.month}.01`
-              ).toISOString()
-            }
-          ]
-        }
-      ]
-    };
+  // handleEnd = ({ steps, values }) => {
+  //   console.log(values);
+  //   const {
+  //     coverage,
+  //     year,
+  //     model,
+  //     deductible_collision,
+  //     deductible_comprehensive,
+  //     make,
+  //     license_date,
+  //     incidents,
+  //     driver_dob
+  //   } = this.state;
+  //   const obj = {
+  //     car_insurances: [
+  //       {
+  //         monthly_cost: "100",
+  //         zipcode_where_parked: values[0],
+  //         coverage: "100",
+  //         car: [
+  //           {
+  //             year,
+  //             make,
+  //             model,
+  //             deductible_collision: deductible_collision.slice(1),
+  //             deductible_comprehensive: deductible_comprehensive.slice(1)
+  //           }
+  //         ],
+  //         driver: [
+  //           {
+  //             driver_name: "john",
+  //             license_date: new Date(
+  //               `${license_date.year.toString()}.${license_date.month}.01`
+  //             ).toISOString(),
+  //             incidents,
+  //             driver_dob: new Date(
+  //               `${driver_dob.year.toString()}.${driver_dob.month}.01`
+  //             ).toISOString()
+  //           }
+  //         ]
+  //       }
+  //     ]
+  //   };
 
-    axios
-      .post("https://api.sikka.app/user/rate_model/guest/", obj)
-      .then(data => console.log("success", data))
-      .catch(err => console.log("err", err));
-  };
+  //   axios
+  //     .post("https://api.sikka.app/user/rate_model/guest/", obj)
+  //     .then(data => console.log("success", data))
+  //     .catch(err => console.log("err", err));
+  // };
 
   doubleSelected = (key, item) => {
     var obj = {};
@@ -305,7 +305,7 @@ class App extends Component {
                     label: "Refining Quote",
                     trigger: "14"
                   },
-                  { value: "Shop", label: "Shop", trigger: "shop" }
+                  { value: "Shop", label: "Shop", trigger: "21" }
                 ]
               },
 
@@ -396,7 +396,17 @@ class App extends Component {
               },
               {
                 id: "shopButton",
-                options: [{ value: "Shop", label: "Shop", trigger: "shop" }]
+                options: [{ value: "Shop", label: "Shop", trigger: "21" }]
+              },
+              {
+                id: "21",
+                message: "Whats your emailId?",
+                trigger: "email"
+              },
+              {
+                id: "email",
+                user: true,
+                trigger: "shop"
               },
               {
                 id: "shop",
