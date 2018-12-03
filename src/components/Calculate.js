@@ -117,7 +117,7 @@ class Calculate extends Component {
       .then(data => {
         console.log("data", data);
         if (data.data.data.rate_model) {
-          const { rate } = data.data.data.rate_model;
+          const rate = data.data.data.rate_model;
           this.setState({ save: rate, loading: false }, () => {
             this.props.triggerNextStep();
           });
@@ -141,6 +141,51 @@ class Calculate extends Component {
     });
   }
 
+  displayMessage = () => {
+    if (this.props.message) {
+      return <div>{this.props.message}</div>;
+    } else {
+      const { rate, Allstate, CSAA, STATEFARM } = this.state.save;
+      return (
+        <div>
+          <div>We estimate you can save ${rate} from other providers</div>
+          <table>
+            <tr>
+              <th>Company</th>
+              <th>Cost</th>
+            </tr>
+            <tr>
+              <td>Allstate</td>
+              <td>{Allstate}</td>
+            </tr>
+            <tr>
+              <td>CSAA</td>
+              <td>{CSAA}</td>
+            </tr>
+            <tr>
+              <td>GEICO_2.0</td>
+              <td>{this.state.save["GEICO_2.0"]}</td>
+            </tr>
+            <tr>
+              <td>PROGRESSIVE_2.0</td>
+              <td>{this.state.save["PROGRESSIVE_2.0"]}</td>
+            </tr>
+
+            <tr>
+              <td>STATEFARM</td>
+              <td>{STATEFARM}</td>
+            </tr>
+          </table>
+        </div>
+      );
+    }
+  };
+  // {this.props.message
+  //   ? this.props.message
+  //   : `We estimate you can save ${save} from other providers`}
+  //
+  // }
+
   render() {
     const { trigger, loading, result, save } = this.state;
 
@@ -148,15 +193,7 @@ class Calculate extends Component {
       <div className="dbpedia">
         {loading ? <Loading /> : result}
         {!loading && (
-          <div>
-            {!trigger && (
-              <div>
-                {this.props.message
-                  ? this.props.message
-                  : `We estimate you can save ${save} from other providers`}
-              </div>
-            )}
-          </div>
+          <div>{!trigger && <div>{this.displayMessage()}</div>}</div>
         )}
       </div>
     );
